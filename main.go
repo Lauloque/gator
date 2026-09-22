@@ -2,31 +2,39 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/Lauloque/gator/internal/config"
 )
 
 func main() {
-	fmt.Println("hi there")
-
+	// Read config file
 	cfg, err := config.Read()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error reading config: %v", err)
 	}
 
-	username, err := config.GetUsername()
+	var appState = state{}
+	appState.configPtr = &cfg
+
+	cmds := commands{
+		registeredCmds: make(map[string]func(*state, command) error),
+	}
+	cmds.register("login", handlerLogin)
+
+	// REPL
+	if len(os.Args) < 2 {
+		log.Fatal("Excpeced usage: 'gator <command> [args...]'")
+	}
+
+	cmd := command{
+		name:      os.Args[1],
+		arguments: os.Args[2:],
+	}
+
+	err = cmds.run(&appState, cmd)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	cfg.SetUser(username)
-
-	cfg, err = config.Read()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("%#v\n", cfg)
 }
