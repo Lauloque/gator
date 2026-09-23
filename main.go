@@ -30,6 +30,7 @@ func main() {
 		registeredCmds: make(map[string]func(*state, command) error),
 	}
 	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
 
 	// REPL
 	if len(os.Args) < 2 {
