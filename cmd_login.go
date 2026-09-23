@@ -3,7 +3,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"os"
 )
 
 func handlerLogin(s *state, cmd command) error {
@@ -11,7 +13,15 @@ func handlerLogin(s *state, cmd command) error {
 		return fmt.Errorf("Missing argument: 'login' expects a username")
 	}
 
-	err := s.configPtr.SetUser(cmd.arguments[0])
+	inputName := cmd.arguments[0]
+
+	_, err := s.dbPtr.GetUser(context.Background(), inputName)
+	if err != nil {
+		fmt.Printf("Can't login as user '%s': %v", inputName, err)
+		os.Exit(1)
+	}
+
+	err = s.configPtr.SetUser(inputName)
 	if err != nil {
 		return err
 	}
