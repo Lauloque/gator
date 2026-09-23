@@ -6,9 +6,11 @@ import (
 	"fmt"
 
 	"github.com/Lauloque/gator/internal/config"
+	"github.com/Lauloque/gator/internal/database"
 )
 
 type state struct {
+	dbPtr     *database.Queries
 	configPtr *config.Config
 }
 

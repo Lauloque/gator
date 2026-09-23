@@ -2,10 +2,14 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 
 	"github.com/Lauloque/gator/internal/config"
+	"github.com/Lauloque/gator/internal/database"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -15,8 +19,12 @@ func main() {
 		log.Fatalf("Error reading config: %v", err)
 	}
 
+	db, err := sql.Open("postgres", cfg.DBURL)
+	dbQueries := database.New(db)
+
 	var appState = state{}
 	appState.configPtr = &cfg
+	appState.dbPtr = dbQueries
 
 	cmds := commands{
 		registeredCmds: make(map[string]func(*state, command) error),
