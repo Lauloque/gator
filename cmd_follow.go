@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, user database.User) error {
 	if len(cmd.arguments) == 0 {
 		return fmt.Errorf("'follow' expects a feed url")
 	}
@@ -22,17 +22,12 @@ func handlerFollow(s *state, cmd command) error {
 		return err
 	}
 
-	currentUser, err := s.dbPtr.GetUser(context.Background(), s.configPtr.CurrentUserName)
-	if err != nil {
-		return err
-	}
-
 	currentTime := time.Now()
 	params := database.CreateFeedFollowParams{
 		ID:        uuid.New(),
 		CreatedAt: currentTime,
 		UpdatedAt: currentTime,
-		UserID:    currentUser.ID,
+		UserID:    user.ID,
 		FeedID:    feed.ID,
 	}
 

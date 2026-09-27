@@ -5,26 +5,22 @@ package main
 import (
 	"context"
 	"fmt"
+
+	"github.com/Lauloque/gator/internal/database"
 )
 
-func handlerFollowing(s *state, cmd command) error {
-
-	currentUser, err := s.dbPtr.GetUser(context.Background(), s.configPtr.CurrentUserName)
-	if err != nil {
-		return err
-	}
-
-	feedFollows, err := s.dbPtr.GetFeedFollowsForUserId(context.Background(), currentUser.ID)
+func handlerFollowing(s *state, cmd command, user database.User) error {
+	feedFollows, err := s.dbPtr.GetFeedFollowsForUserId(context.Background(), user.ID)
 	if err != nil {
 		return err
 	}
 
 	if len(feedFollows) == 0 {
-		fmt.Printf("No feeds followed by user '%v', yet...\n", currentUser.Name)
+		fmt.Printf("No feeds followed by user '%v', yet...\n", user.Name)
 		return nil
 	}
 
-	fmt.Printf("Feeds followed by user '%v':\n", currentUser.Name)
+	fmt.Printf("Feeds followed by user '%v':\n", user.Name)
 	for _, feedFollow := range feedFollows {
 		fmt.Printf("* Feed Name: %v\n", feedFollow.FeedName)
 	}
