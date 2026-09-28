@@ -19,3 +19,31 @@ func handlerAgg(s *state, _ command) error {
 
 	return nil
 }
+
+func scrapeFeeds(s *state) error {
+	nextFeed, err := s.dbPtr.GetNextFeedToFetch(context.Background())
+	if err != nil {
+		return err
+	}
+
+	err = s.dbPtr.MarkFeedFetched(context.Background(), nextFeed.ID)
+	if err != nil {
+		return err
+	}
+
+	rssFeed, err := fetchFeed(context.Background(), nextFeed.Url)
+	if err != nil {
+		return err
+	}
+
+	printRssFeedTitles(rssFeed)
+
+	return nil
+}
+
+func printRssFeedTitles(rssFeed *RSSFeed) {
+	fmt.Println(rssFeed.Channel.Title)
+	for i := range rssFeed.Channel.Item {
+		fmt.Println(rssFeed.Channel.Item[i].Title)
+	}
+}
