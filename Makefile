@@ -10,3 +10,6 @@ up:
 
 down:
 	cd sql/schema && goose postgres $(CONNECTION_STRING) down
+
+build:
+	go build -o bin/gator
