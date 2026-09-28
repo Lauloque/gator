@@ -5,6 +5,8 @@ package main
 import (
 	"context"
 	"fmt"
+
+	"github.com/Lauloque/gator/internal/database"
 )
 
 func handlerFeeds(s *state, _ command) error {
@@ -20,14 +22,22 @@ func handlerFeeds(s *state, _ command) error {
 	}
 
 	for _, feed := range feeds {
-		fmt.Printf("* Name    : %s\n", feed.Name)
-		fmt.Printf("* URL     : %s\n", feed.Url)
-		author, err := s.dbPtr.GetUserById(context.Background(), feed.UserID)
+		err := printFeed(s, feed)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("* Author  : %s\n", author.Name)
 	}
 
+	return nil
+}
+
+func printFeed(s *state, feed database.Feed) error {
+	fmt.Printf("* Name    : %s\n", feed.Name)
+	fmt.Printf("* URL     : %s\n", feed.Url)
+	author, err := s.dbPtr.GetUserById(context.Background(), feed.UserID)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("* Author  : %s\n", author.Name)
 	return nil
 }
