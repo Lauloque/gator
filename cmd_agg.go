@@ -5,17 +5,25 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 )
 
-func handlerAgg(s *state, _ command) error {
-	url := "https://www.wagslane.dev/index.xml"
-
-	feed, err := fetchFeed(context.Background(), url)
-	if err != nil {
-		return fmt.Errorf("Couldn't fetch feed: %v", err)
+func handlerAgg(s *state, cmd command) error {
+	if len(cmd.arguments) == 0 {
+		return fmt.Errorf("'agg' expects a duration string, eg: '1s', '1m', '1h' etc")
 	}
 
-	fmt.Printf("%+v\n", feed)
+	frequency, err := time.ParseDuration(cmd.arguments[0])
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Collectiing feeds every %v", frequency)
+
+	ticker := time.NewTicker(frequency)
+	for ; ; <-ticker.C {
+		scrapeFeeds(s)
+	}
 
 	return nil
 }
