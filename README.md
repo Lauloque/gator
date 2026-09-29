@@ -4,6 +4,9 @@ A barebone blog aggregator in Go
 
 Made in the context of the [Boot.dev class: Build a Blog Aggregator in Go](https://www.boot.dev/courses/build-blog-aggregator-golang)
 
+<img width="900" height="550" alt="image" src="https://github.com/user-attachments/assets/14866b6b-a7b3-45a8-92d0-e4286ae159cb" />
+
+
 ## How to use
 
 1. Make sure you have [Postgresql](https://www.postgresql.org/) and [Go](https://go.dev/) installed.
