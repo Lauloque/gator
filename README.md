@@ -26,11 +26,15 @@ Global usage: `gator <command> [arguments...]`
 
 - `users` - List all users
 
+
+
 - `addfeed [feed name] [feed url]` - Adds a new feed to the database
 
 - `feeds` - Displays feeds that have been added to gator
 
 - `agg [duration]` - Aggregates added feeds at the given interval duration eg: '1s', '1m', '1h' etc
+
+
 
 - `follow [feed url]` - Follows a feed already in the database
 
@@ -39,5 +43,7 @@ Global usage: `gator <command> [arguments...]`
 - `unfollow [feed url]` - Stops following a feed
 
 - `browse [number]` - Displays `[number]` most recent posts from followed feeds
+
+
 
 - `reset` - Deletes all users from database
