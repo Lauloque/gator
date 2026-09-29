@@ -4,8 +4,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
+	"log"
+	"strings"
 	"time"
+
+	"github.com/Lauloque/gator/internal/database"
+	"github.com/google/uuid"
 )
 
 func handlerAgg(s *state, cmd command) error {
@@ -44,14 +50,50 @@ func scrapeFeeds(s *state) error {
 		return err
 	}
 
-	printRssFeedTitles(rssFeed)
+	fmt.Println(rssFeed.Channel.Title)
+
+	for i := range rssFeed.Channel.Item {
+		description := sql.NullString{
+			String: rssFeed.Channel.Item[i].Description,
+			Valid:  true,
+		}
+
+		rawDate := rssFeed.Channel.Item[i].PubDate
+		pubdate := sql.NullTime{}
+		if t, err := time.Parse(time.RFC1123Z, rawDate); err == nil {
+			pubdate = sql.NullTime{
+				Time:  t,
+				Valid: true,
+			}
+		} else if t, err := time.Parse(time.RFC1123, rawDate); err == nil {
+			pubdate = sql.NullTime{
+				Time:  t,
+				Valid: true,
+			}
+		}
+
+		currentTime := time.Now()
+		params := database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   currentTime,
+			UpdatedAt:   currentTime,
+			Title:       rssFeed.Channel.Item[i].Title,
+			Url:         rssFeed.Channel.Item[i].Link,
+			Description: description,
+			PublishedAt: pubdate,
+			FeedID:      nextFeed.ID,
+		}
+
+		_, err := s.dbPtr.CreatePost(context.Background(), params)
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				continue
+			}
+			log.Printf("Couldn't create post: %v\n", err)
+			continue
+		}
+		log.Printf("Created post: %v\n", rssFeed.Channel.Item[i].Title)
+	}
 
 	return nil
-}
-
-func printRssFeedTitles(rssFeed *RSSFeed) {
-	fmt.Println(rssFeed.Channel.Title)
-	for i := range rssFeed.Channel.Item {
-		fmt.Println(rssFeed.Channel.Item[i].Title)
-	}
 }
