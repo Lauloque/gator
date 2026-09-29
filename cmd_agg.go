@@ -24,7 +24,7 @@ func handlerAgg(s *state, cmd command) error {
 		return err
 	}
 
-	fmt.Printf("Collectiing feeds every %v", frequency)
+	fmt.Printf("Collectiing feeds every %v\n", frequency)
 
 	ticker := time.NewTicker(frequency)
 	for ; ; <-ticker.C {
@@ -52,6 +52,7 @@ func scrapeFeeds(s *state) error {
 
 	fmt.Println(rssFeed.Channel.Title)
 
+	total := 0
 	for i := range rssFeed.Channel.Item {
 		description := sql.NullString{
 			String: rssFeed.Channel.Item[i].Description,
@@ -92,8 +93,9 @@ func scrapeFeeds(s *state) error {
 			log.Printf("Couldn't create post: %v\n", err)
 			continue
 		}
-		log.Printf("Created post: %v\n", rssFeed.Channel.Item[i].Title)
+		total += 1
 	}
+	fmt.Printf("Created %d post(s)\n", total)
 
 	return nil
 }
