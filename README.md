@@ -24,20 +24,19 @@ Global usage: `gator <command> [arguments...]`
 - `login [name]` - Log in as an existing user
 - `users` - List all users
 
------
+---
 
+- `addfeed [feed name] [feed url]` - Add a new feed to the database
+- `feeds` - Display feeds that have been added to gator
+- `agg [duration]` - Aggregate added feeds at the given interval duration eg: '1s', '1m', '1h' etc
 
-- `addfeed [feed name] [feed url]` - Adds a new feed to the database
-- `feeds` - Displays feeds that have been added to gator
-- `agg [duration]` - Aggregates added feeds at the given interval duration eg: '1s', '1m', '1h' etc
+---
 
------
-
-- `follow [feed url]` - Follows a feed already in the database
+- `follow [feed url]` - Follow a feed already in the database
 - `follows` - Display feeds that the current user is following
-- `unfollow [feed url]` - Stops following a feed
-- `browse [number]` - Displays `[number]` most recent posts from followed feeds
+- `unfollow [feed url]` - Stop following a feed
+- `browse [number]` - Display `[number]` most recent posts from followed feeds
 
------
+---
 
-- `reset` - Deletes all users from database
+- `reset` - Delete all users from database
